@@ -1,0 +1,1548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Grand Palladium Bird Quest</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      color-scheme: light dark;
+      --jamaica-green: #059669;
+      --jamaica-gold:  #facc15;
+      --jamaica-red:   #ef4444;
+      --jamaica-sky:   #0ea5e9;
+      --card-bg:       #ffffff;
+      --card-border:   rgba(0,0,0,0.06);
+      --page-bg:       #f3f4f6;
+      --text-main:     #020617;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --card-bg:     #0b1220;
+        --card-border: rgba(148,163,184,0.4);
+        --page-bg:     #020617;
+        --text-main:   #e5e7eb;
+      }
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      margin: 0;
+      padding: 0.75rem;
+      color: var(--text-main);
+      background:
+        radial-gradient(circle at 0 0, rgba(56,189,248,0.22), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(52,211,153,0.22), transparent 55%),
+        var(--page-bg);
+    }
+
+    .container {
+      max-width: 820px;
+      margin: 0.25rem auto 4rem auto;
+      padding: 0.5rem 0.5rem 2.5rem 0.5rem;
+    }
+
+    h1 {
+      font-size: 1.55rem;
+      text-align: center;
+      margin: 0.35rem 0 0.1rem 0;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: #fefce8;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.45);
+    }
+
+    .jamaica-banner {
+      margin: 0 auto 0.6rem auto;
+      max-width: 820px;
+      padding: 0.7rem 0.9rem;
+      border-radius: 0.9rem;
+      background: linear-gradient(135deg, #047857, #22c55e, #facc15, #ef4444);
+      background-size: 200% 200%;
+      animation: bannerGlow 12s ease-in-out infinite;
+      box-shadow: 0 10px 25px rgba(15,23,42,0.35);
+    }
+
+    @keyframes bannerGlow {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 0.9rem;
+      opacity: 0.95;
+      margin-bottom: 0.1rem;
+      color: #fefce8;
+    }
+
+    .subtitle small {
+      display: block;
+      font-size: 0.78rem;
+      opacity: 0.9;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 0.7rem 0 0.75rem 0;
+    }
+
+    .score-box {
+      background: rgba(15,23,42,0.94);
+      color: #f9fafb;
+      padding: 0.55rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      box-shadow: 0 4px 10px rgba(15,23,42,0.4);
+    }
+    .score-label {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      opacity: 0.85;
+    }
+    .score-box span {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--jamaica-gold);
+    }
+
+    button.reset-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 0.4rem 0.9rem;
+      font-size: 0.82rem;
+      cursor: pointer;
+      background: #fee2e2;
+      color: #991b1b;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      box-shadow: 0 2px 6px rgba(148,27,27,0.25);
+    }
+    button.reset-btn:hover {
+      background: #fecaca;
+    }
+
+    .tips {
+      font-size: 0.82rem;
+      background: rgba(255,255,255,0.9);
+      padding: 0.7rem 0.8rem;
+      border-radius: 0.85rem;
+      margin-bottom: 0.75rem;
+      box-shadow: 0 6px 18px rgba(15,23,42,0.18);
+      border-left: 4px solid var(--jamaica-green);
+      backdrop-filter: blur(3px);
+    }
+    .tips strong {
+      font-size: 0.86rem;
+    }
+    .tips ul {
+      margin: 0.25rem 0 0.25rem 1.1rem;
+      padding: 0;
+    }
+    .tips li {
+      margin-bottom: 0.2rem;
+    }
+
+    .section-title {
+      margin-top: 1rem;
+      margin-bottom: 0.4rem;
+      font-size: 1rem;
+      font-weight: 700;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+      padding-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .section-title span.icon {
+      font-size: 1rem;
+    }
+
+    .bird-card {
+      background: var(--card-bg);
+      border-radius: 0.95rem;
+      padding: 0.7rem 0.85rem 0.85rem 0.8rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      box-shadow: 0 10px 24px rgba(15,23,42,0.14);
+      border: 1px solid var(--card-border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bird-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg,
+        rgba(34,197,94,0.08),
+        rgba(250,204,21,0.06),
+        rgba(56,189,248,0.08));
+      opacity: 0.9;
+      pointer-events: none;
+    }
+    .bird-card-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .bird-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .bird-name {
+      font-weight: 700;
+      font-size: 0.96rem;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .bird-name span.emoji {
+      font-size: 1rem;
+    }
+    .bird-alt {
+      font-size: 0.75rem;
+      opacity: 0.86;
+    }
+    .points-tag {
+      font-size: 0.78rem;
+      padding: 0.18rem 0.55rem;
+      border-radius: 999px;
+      background: rgba(250,204,21,0.12);
+      color: #854d0e;
+      white-space: nowrap;
+      border: 1px solid rgba(250,204,21,0.6);
+    }
+
+    .note {
+      font-size: 0.76rem;
+      opacity: 0.96;
+      margin-top: 0.18rem;
+    }
+
+    .thumb-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: 0.35rem;
+    }
+
+    .thumb-row img.thumb {
+      height: 70px;
+      width: auto;
+      border-radius: 0.5rem;
+      border: 1px solid rgba(15,23,42,0.15);
+      object-fit: cover;
+      cursor: pointer;
+      box-shadow: 0 3px 8px rgba(15,23,42,0.4);
+      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out;
+      background: #020617;
+    }
+    .thumb-row img.thumb:hover {
+      transform: translateY(-1px) scale(1.02);
+      box-shadow: 0 6px 14px rgba(15,23,42,0.6);
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 0.75rem;
+      margin-top: 0.4rem;
+      font-size: 0.82rem;
+    }
+    .controls label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.15rem 0.4rem 0.15rem 0.25rem;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.03);
+    }
+    .controls label .pill-dot {
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 999px;
+      background: #bbf7d0;
+    }
+    .controls label.photo-label .pill-dot {
+      background: #fde68a;
+    }
+
+    input[type="checkbox"] {
+      width: 1rem;
+      height: 1rem;
+      accent-color: var(--jamaica-green);
+    }
+
+    .file-input {
+      margin-top: 0.25rem;
+      font-size: 0.75rem;
+    }
+    .file-input input[type="file"] {
+      font-size: 0.7rem;
+    }
+    .preview {
+      margin-top: 0.25rem;
+      max-height: 80px;
+    }
+    .preview img {
+      max-height: 80px;
+      border-radius: 0.4rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    }
+
+    .extra-birds {
+      background: var(--card-bg);
+      border-radius: 0.9rem;
+      padding: 0.7rem 0.85rem;
+      font-size: 0.82rem;
+      box-shadow: 0 10px 24px rgba(15,23,42,0.14);
+      margin-bottom: 1.1rem;
+      border: 1px solid var(--card-border);
+      position: relative;
+      overflow: hidden;
+    }
+    .extra-birds::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg,
+        rgba(14,165,233,0.08),
+        rgba(244,114,182,0.08));
+      opacity: 0.9;
+      pointer-events: none;
+    }
+    .extra-inner {
+      position: relative;
+      z-index: 1;
+    }
+    .extra-birds input[type="number"] {
+      width: 4rem;
+      padding: 0.1rem 0.25rem;
+      font-size: 0.8rem;
+      border-radius: 0.4rem;
+      border: 1px solid rgba(148,163,184,0.8);
+    }
+    .extra-birds textarea {
+      width: 100%;
+      margin-top: 0.35rem;
+      min-height: 62px;
+      font-size: 0.8rem;
+      border-radius: 0.5rem;
+      border: 1px solid rgba(148,163,184,0.8);
+      padding: 0.35rem 0.45rem;
+      resize: vertical;
+    }
+
+    /* Lightbox overlay */
+    #lightboxOverlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 10% 0%, rgba(56,189,248,0.5), transparent 60%),
+                  radial-gradient(circle at 90% 100%, rgba(34,197,94,0.5), transparent 60%),
+                  rgba(0,0,0,0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      cursor: zoom-out;
+      padding: 1rem;
+      box-sizing: border-box;
+    }
+
+    #lightboxOverlay img {
+      max-width: 90vw;
+      max-height: 76vh;
+      border-radius: 0.7rem;
+      box-shadow: 0 10px 30px rgba(15,23,42,0.9);
+      border: 2px solid rgba(248,250,252,0.85);
+    }
+
+    #lightboxOverlayCaption {
+      color: #e5e7eb;
+      font-size: 0.82rem;
+      margin-top: 0.5rem;
+      text-align: center;
+    }
+
+    /* Achievement toast (nice) */
+    #rewardToast {
+      position: fixed;
+      left: 50%;
+      bottom: 1rem;
+      transform: translateX(-50%) translateY(120%);
+      background: linear-gradient(135deg, #22c55e, #facc15);
+      color: #022c22;
+      padding: 0.55rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      box-shadow: 0 8px 20px rgba(15,23,42,0.45);
+      display: none;
+      opacity: 0;
+      z-index: 10000;
+      max-width: 90vw;
+      text-align: center;
+      pointer-events: none;
+      transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+    }
+
+    #rewardToast.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0%);
+      pointer-events: auto;
+    }
+
+    /* Snark / gaming-card style toast */
+    #snarkToast {
+      position: fixed;
+      left: 50%;
+      top: 1rem;
+      transform: translateX(-50%) translateY(-140%);
+      background: radial-gradient(circle at 0 0, #fed7aa, transparent 60%),
+                  radial-gradient(circle at 100% 100%, #fecaca, transparent 60%),
+                  #1f2937;
+      color: #f9fafb;
+      padding: 0.6rem 1rem;
+      border-radius: 0.9rem;
+      font-size: 0.82rem;
+      box-shadow: 0 12px 30px rgba(15,23,42,0.8);
+      display: none;
+      opacity: 0;
+      z-index: 10001;
+      max-width: 92vw;
+      text-align: left;
+      pointer-events: none;
+      border: 2px solid #f97316;
+      transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+    }
+
+    #snarkToast .snark-title {
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin-bottom: 0.15rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #fed7aa;
+    }
+    #snarkToast .snark-body {
+      font-size: 0.8rem;
+    }
+
+    #snarkToast.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0%);
+      pointer-events: auto;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      #rewardToast {
+        background: linear-gradient(135deg, #22c55e, #eab308);
+        color: #022c22;
+      }
+      #snarkToast {
+        background: radial-gradient(circle at 0 0, #fed7aa33, transparent 60%),
+                    radial-gradient(circle at 100% 100%, #fecaca33, transparent 60%),
+                    #020617;
+        border-color: #fb923c;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .top-bar {
+        align-items: stretch;
+      }
+      .score-box {
+        width: 100%;
+        justify-content: center;
+      }
+      button.reset-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="jamaica-banner">
+    <h1>Grand Palladium Bird Quest</h1>
+    <div class="subtitle">
+      Jamaica · March 24–31 2026 
+      <small>Eric, Margaret, Pam &amp; Jim · FeatherFiles Field Edition</small>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="top-bar">
+      <div class="score-box">
+        <div class="score-label">Total Score</div>
+        <span id="totalScore">0</span>
+      </div>
+      <button class="reset-btn" type="button" onclick="resetForm()">
+        <span>🔄 Reset Quest</span>
+      </button>
+    </div>
+
+    <div class="tips">
+      <strong>Island Birding Tips 🏝️</strong>
+      <ul>
+        <li>Prime action: <strong>6:30–9:00 AM</strong> &amp; <strong>4:30–6:00 PM</strong> before &amp; after the heat hits.</li>
+        <li>Flowers &amp; hedges = hummingbirds &amp; bananaquits. Water &amp; rocks = pelicans &amp; egrets.</li>
+        <li>Look <em>up</em> late morning for frigatebirds riding the thermals like kites.</li>
+        <li>Find a shady spot, sit still 3–5 minutes, let the birds come to you. Bonus: works great with a drink in hand.</li>
+      </ul>
+    </div>
+
+    <div class="section-title">
+      <span class="icon">🦜</span>
+      <span>Main Quest Birds</span>
+    </div>
+
+    <!-- 1. Red-billed Streamertail -->
+    <div class="bird-card" data-bird-id="doctor_bird" data-base="5" data-bonus="2">
+      <div class="bird-card-inner">
+        <div class="bird-header">
+          <div>
+            <div class="bird-name"><span class="emoji">💚</span> Red-billed Streamertail</div>
+            <div class="bird-alt">“Doctor Bird” – Jamaica’s national hummingbird</div>
+          </div>
+          <div class="points-tag">5 pts · +2 photo</div>
+        </div>
+        <div class="note">
+          Best time: early morning &amp; late afternoon. Best spots: flowering hedges, paths between rooms, quiet gardens where it feels just a little too peaceful.
+        </div>
+        <div class="thumb-row">
+          <img class="thumb"
+               src="FeatherFiles/doctor_bird_1.jpg"
+               alt="Doctor Bird – view 1"
+               data-full="FeatherFiles/doctor_bird_1.jpg"
+               data-caption="Doctor Bird – nectar run (view 1)" />
+          <img class="thumb"
+               src="FeatherFiles/doctor_bird_2.jpg"
+               alt="Doctor Bird – view 2"
+               data-full="FeatherFiles/doctor_bird_2.jpg"
+               data-caption="Doctor Bird – tail streamers flex (view 2)" />
+          <img class="thumb"
+               src="FeatherFiles/doctor_bird_3.jpg"
+               alt="Doctor Bird – view 3"
+               data-full="FeatherFiles/doctor_bird_3.jpg"
+               data-caption="Doctor Bird – hover mode (view 3)" />
+        </div>
+        <div class="controls">
+          <label>
+            <span class="pill-dot"></span>
+            <input type="checkbox" class="seen" onchange="updateScore()" />
+            Seen in the wild
+          </label>
+          <label class="photo-label">
+            <span class="pill-dot"></span>
+            <input type="checkbox" class="photo" disabled />
+            Photo uploaded
+          </label>
+        </div>
+        <div class="file-input">
+          Upload your Doctor Bird photo for bonus points:
+          <input type="file" accept="image/*" onchange="handlePhotoUpload(this)" />
+          <div class="preview"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Bananaquit -->
+    <div class="bird-card" data-bird-id="bananaquit" data-base="2" data-bonus="2">
+      <div class="bird-card-inner">
+        <div class="bird-header">
+          <div>
+            <div class="bird-name"><span class="emoji">🍌</span> Bananaquit</div>
+            <div class="bird-alt">Tiny nectar bandit in flowers</div>
+          </div>
+          <div class="points-tag">2 pts · +2 photo</div>
+        </div>
+        <div class="note">
+          Best time: morning–midday. Best spots: flowering bushes near dining areas and garden beds. Often seen judging your breakfast choices.
+        </div>
+        <div class="thumb-row">
+          <img class="thumb"
+               src="FeatherFiles/bananaquit_1.jpg"
+               alt="Bananaquit – view 1"
+               data-full="FeatherFiles/bananaquit_1.jpg"
+               data-caption="Bananaquit – resort shrub inspector (view 1)" />
+          <img class="thumb"
+               src="FeatherFiles/bananaquit_2.jpg"
+               alt="Bananaquit – view 2"
+               data-full="FeatherFiles/bananaquit_2.jpg"
+               data-caption="Bananaquit – sipping the good stuff (view 2)" />
+        </div>
+        <div class="controls">
+          <label>
+            <span class="pill-dot"></span>
+            <input type="checkbox" class="seen" onchange="updateScore()" />
+            Seen
+          </label>
+          <label class="photo-label">
+            <span class="pill-dot"></span>
+            <input type="checkbox" class="photo" disabled />
+            Photo uploaded
+          </label>
+        </div>
+        <div class="file-input">
+          Upload your Bananaquit photo for bonus points:
+          <input type="file" accept="image/*" onchange="handlePhotoUpload(this)" />
+          <div class="preview"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Zenaida Dove -->
+    <div class="bird-card" data-bird-id="zenaida_dove" data-base="1" data-bonus="2">
+      <div class="bird-card-inner">
+        <div class="bird-header">
+          <div>
+            <div class="bird-name"><span class="emoji">🕊️</span> Zenaida Dove</div>
+            <div class="bird-alt">Gentle ground dove</div>
+          </div>
+          <div class="points-tag">1 pt · +2 photo</div>
+        </div>
+        <div class="note">
+          Best time: morning &amp; late afternoon. Best spots: lawns, walkways, low trees. Frequently seen minding its business while humans rush around.
+        </div>
+        <div class="thumb-row">
+          <img class="thumb"
+               src="FeatherFiles/zenaida_dove_1.jpg"
+               alt="Zenaida Dove – view 1"
+               data-full="FeatherFiles/zenaida_dove_1.jpg"
+               data-caption="Zenaida Dove – calm presence (view 1)" />
+          <img class="thumb"
+               src="FeatherFiles/zenaida_dove_2.jpg"
+               alt="Zenaida Dove – view 2"
+               data-full="FeatherFiles/zenaida_dove_2.jpg"
+               data-caption="Zenaida Dove – walkway patrol (view 2)" />
+        </div>
+        <div class="controls">
+          <label>
+            <span class="pill-dot"></span>
+            <input type="checkbox" class="seen" onchange="updateScore()" />
+            Seen
+          </label>
+          <label class="photo-label">
+            <span class="pill-dot"></span>
+            <input type="checkbox" class="photo" disabled />
+            Photo uploaded
+          </label>
+        </div>
+        <div class="file-input">
+          Upload your Zenaida Dove photo for bonus points:
+          <input type="file" accept="image/*" onchange="handlePhotoUpload(this)" />
+          <div class="preview"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Brown Pelican -->
+    <div class="bird-card" data-bird-id="brown_pelican" data-base="2" data-bonus="2">
+      <div class="bird-card-inner">
+        <div class="bird-header">
+          <div>
+            <div class="bird-name"><span class="emoji">🌊</span> Brown Pelican</div>
+            <div class="bird-alt">Classic coastal dive-bomber</div>
+          </div>
+          <div class="points-tag">2 pts · +2 photo</div>
+        </div>
+        <div class="note">
+          Best time: late morning–afternoon. Best spots: over the ocean along the beach, gliding low over waves or dropping like a feathered torpedo.
+        </div>
+        <div class="thumb-row">
+          <img class="thumb"
+               src="FeatherFiles/brown_pelican_1.jpg"
+               alt="Brown Pelican – view 1"
+               data-full="FeatherFiles/brown_pelican_1.jpg"
+               data-caption="Brown Pelican – cruise mode (view 1)" />
+          <img class="thumb"
+               src="FeatherFiles/brown_pelican_2.jpg"
+               alt="Brown Pelican – view 2"
+               data-full="FeatherFiles/brown_pelican_2.jpg"
+               data-caption="Brown Pelican – ready to dive (view 2)" />
+          <img class="thumb"
+               src="FeatherFiles/brown_pelican_3.jpg"
+               alt="Brown Pelican – view 3"
+               data-full="FeatherFiles/brown_pelican_3.jpg"
+               data-caption="Brown Pelican – post-lunch glide (view 3)" />
+        </div>
+        <div class="controls">
+          <label>
+            <span class="pill-dot"></span>
+            <input type="checkbox" class="seen" onchange="updateScore()" />
+            Seen
+          </label>
+          <label class="photo-label">
+            <span class="pill-dot"></span>
+            <input type="checkbox" class="photo" disabled />
+            Photo uploaded
+          </label>
+        </div>
+        <div class="file-input">
+          Upload your Brown Pelican photo for bonus points:
+          <input type="file" accept="image/*" onchange="handlePhotoUpload(this)" />
+          <div class="preview"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Magnificent Frigatebird -->
+    <div class="bird-card" data-bird-id="magnificent_frigatebird" data-base="3" data-bonus="2">
+      <div class="bird-card-inner">
+        <div class="bird-header">
+          <div>
+            <div class="bird-name"><span class="emoji">🪂</span> Magnificent Frigatebird</div>
+            <div class="bird-alt">Long-winged sky pirate</div>
+          </div>
+          <div class="points-tag">3 pts · +2 photo</div>
+        </div>
+        <div class="note">
+          Best time: late morning–afternoon (thermals). Best spots: high above coastline, hanging like a kite that forgot it needs a string.
+        </div>
+        <div class="thumb-row">
+          <img class="thumb"
+               src="FeatherFiles/magnificent_frigatebird_1.jpg"
+               alt="Magnificent Frigatebird – view 1"
+               data-full="FeatherFiles/magnificent_frigatebird_1.jpg"
+               data-caption="Magnificent Frigatebird – sky king (view 1)" />
+          <img class="thumb"
+               src="FeatherFiles/magnificent_frigatebird_2.jpg"
+               alt="Magnificent Frigatebird – view 2"
+               data-full="FeatherFiles/magnificent_frigatebird_2.jpg"
+               data-caption="Magnificent Frigatebird – on patrol (view 2)" />
+          <img class="thumb"
+               src="FeatherFiles/magnificent_frigatebird_3.jpg"
+               alt="Magnificent Frigatebird – view 3"
+               data-full="FeatherFiles/magnificent_frigatebird_3.jpg"
+               data-caption="Magnificent Frigatebird – high over the bay (view 3)" />
+        </div>
+        <div class="controls">
+          <label>
+            <span class="pill-dot"></span>
+            <input type="checkbox" class="seen" onchange="updateScore()" />
+            Seen
+          </label>
+          <label class="photo-label">
+            <span class="pill-dot"></span>
+            <input type="checkbox" class="photo" disabled />
+            Photo uploaded
+          </label>
+        </div>
+        <div class="file-input">
+          Upload your Frigatebird photo for bonus points:
+          <input type="file" accept="image/*" onchange="handlePhotoUpload(this)" />
+          <div class="preview"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. Egrets & Herons -->
+    <div class="bird-card" data-bird-id="egrets_herons" data-base="2" data-bonus="2">
+      <div class="bird-card-inner">
+        <div class="bird-header">
+          <div>
+            <div class="bird-name"><span class="emoji">🤍</span> Egrets &amp; Herons</div>
+            <div class="bird-alt">Great Egret · Cattle Egret · Little Blue Heron</div>
+          </div>
+          <div class="points-tag">2 pts · +2 photo</div>
+        </div>
+        <div class="note">
+          Best time: morning &amp; late afternoon. Best spots: ponds, marsh edges, rocky shallows, lawns (especially Cattle Egrets near grass or animals).
+        </div>
+        <div class="thumb-row">
+          <img class="thumb"
+               src="FeatherFiles/egrets_herons_1.jpg"
+               alt="Egrets &amp; Herons – view 1"
+               data-full="FeatherFiles/egrets_herons_1.jpg"
+               data-caption="Egrets &amp; Herons – shoreline patrol (view 1)" />
+          <img class="thumb"
+               src="FeatherFiles/egrets_herons_2.jpg"
+               alt="Egrets &amp; Herons – view 2"
+               data-full="FeatherFiles/egrets_herons_2.jpg"
+               data-caption="Egrets &amp; Herons – in the shallows (view 2)" />
+          <img class="thumb"
+               src="FeatherFiles/egrets_herons_3.jpg"
+               alt="Egrets &amp; Herons – view 3"
+               data-full="FeatherFiles/egrets_herons_3.jpg"
+               data-caption="Egrets &amp; Herons – golden hour (view 3)" />
+        </div>
+        <div class="controls">
+          <label>
+            <span class="pill-dot"></span>
+            <input type="checkbox" class="seen" onchange="updateScore()" />
+            Seen
+          </label>
+          <label class="photo-label">
+            <span class="pill-dot"></span>
+            <input type="checkbox" class="photo" disabled />
+            Photo uploaded
+          </label>
+        </div>
+        <div class="file-input">
+          Upload your Egret/Heron photo for bonus points:
+          <input type="file" accept="image/*" onchange="handlePhotoUpload(this)" />
+          <div class="preview"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. Smooth-billed Ani -->
+    <div class="bird-card" data-bird-id="smooth_billed_ani" data-base="3" data-bonus="2">
+      <div class="bird-card-inner">
+        <div class="bird-header">
+          <div>
+            <div class="bird-name"><span class="emoji">🖤</span> Smooth-billed Ani</div>
+            <div class="bird-alt">Sociable black bird with big bill</div>
+          </div>
+          <div class="points-tag">3 pts · +2 photo</div>
+        </div>
+        <div class="note">
+          Best time: morning &amp; late afternoon. Best spots: scrubby edges, hedges, resort perimeter. Often appears in a small committee of Anis, discussing things loudly.
+        </div>
+        <div class="thumb-row">
+          <img class="thumb"
+               src="FeatherFiles/smooth_billed_ani_1.jpg"
+               alt="Smooth-billed Ani – view 1"
+               data-full="FeatherFiles/smooth_billed_ani_1.jpg"
+               data-caption="Smooth-billed Ani – hedge meeting (view 1)" />
+          <img class="thumb"
+               src="FeatherFiles/smooth_billed_ani_2.jpg"
+               alt="Smooth-billed Ani – view 2"
+               data-full="FeatherFiles/smooth_billed_ani_2.jpg"
+               data-caption="Smooth-billed Ani – side profile (view 2)" />
+        </div>
+        <div class="controls">
+          <label>
+            <span class="pill-dot"></span>
+            <input type="checkbox" class="seen" onchange="updateScore()" />
+            Seen
+          </label>
+          <label class="photo-label">
+            <span class="pill-dot"></span>
+            <input type="checkbox" class="photo" disabled />
+            Photo uploaded
+          </label>
+        </div>
+        <div class="file-input">
+          Upload your Ani photo for bonus points:
+          <input type="file" accept="image/*" onchange="handlePhotoUpload(this)" />
+          <div class="preview"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. Jamaican Woodpecker -->
+    <div class="bird-card" data-bird-id="jamaican_woodpecker" data-base="4" data-bonus="2">
+      <div class="bird-card-inner">
+        <div class="bird-header">
+          <div>
+            <div class="bird-name"><span class="emoji">🪵</span> Jamaican Woodpecker</div>
+            <div class="bird-alt">Endemic island woodpecker</div>
+          </div>
+          <div class="points-tag">4 pts · +2 photo</div>
+        </div>
+        <div class="note">
+          Best time: early morning. Best spots: taller trees in quiet areas; listen for tapping and that “someone’s doing maintenance in the trees” sound.
+        </div>
+        <div class="thumb-row">
+          <img class="thumb"
+               src="FeatherFiles/jamaican_woodpecker_1.jpg"
+               alt="Jamaican Woodpecker – view 1"
+               data-full="FeatherFiles/jamaican_woodpecker_1.jpg"
+               data-caption="Jamaican Woodpecker – trunk check (view 1)" />
+          <img class="thumb"
+               src="FeatherFiles/jamaican_woodpecker_2.jpg"
+               alt="Jamaican Woodpecker – view 2"
+               data-full="FeatherFiles/jamaican_woodpecker_2.jpg"
+               data-caption="Jamaican Woodpecker – side pose (view 2)" />
+          <img class="thumb"
+               src="FeatherFiles/jamaican_woodpecker_3.jpg"
+               alt="Jamaican Woodpecker – view 3"
+               data-full="FeatherFiles/jamaican_woodpecker_3.jpg"
+               data-caption="Jamaican Woodpecker – crown detail (view 3)" />
+        </div>
+        <div class="controls">
+          <label>
+            <span class="pill-dot"></span>
+            <input type="checkbox" class="seen" onchange="updateScore()" />
+            Seen
+          </label>
+          <label class="photo-label">
+            <span class="pill-dot"></span>
+            <input type="checkbox" class="photo" disabled />
+            Photo uploaded
+          </label>
+        </div>
+        <div class="file-input">
+          Upload your Woodpecker photo for bonus points:
+          <input type="file" accept="image/*" onchange="handlePhotoUpload(this)" />
+          <div class="preview"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9. Jamaican Euphonia -->
+    <div class="bird-card" data-bird-id="jamaican_euphonia" data-base="5" data-bonus="2">
+      <div class="bird-card-inner">
+        <div class="bird-header">
+          <div>
+            <div class="bird-name"><span class="emoji">🎨</span> Jamaican Euphonia</div>
+            <div class="bird-alt">Small, colorful island songbird</div>
+          </div>
+          <div class="points-tag">5 pts · +2 photo</div>
+        </div>
+        <div class="note">
+          Best time: morning &amp; evening. Best spots: fruiting trees, dense shrubs. Bright little splash of paint in the greenery.
+        </div>
+        <div class="thumb-row">
+          <img class="thumb"
+               src="FeatherFiles/jamaican_euphonia_1.jpg"
+               alt="Jamaican Euphonia – view 1"
+               data-full="FeatherFiles/jamaican_euphonia_1.jpg"
+               data-caption="Jamaican Euphonia – fruit stop (view 1)" />
+          <img class="thumb"
+               src="FeatherFiles/jamaican_euphonia_2.jpg"
+               alt="Jamaican Euphonia – view 2"
+               data-full="FeatherFiles/jamaican_euphonia_2.jpg"
+               data-caption="Jamaican Euphonia – branch pose (view 2)" />
+          <img class="thumb"
+               src="FeatherFiles/jamaican_euphonia_3.jpg"
+               alt="Jamaican Euphonia – view 3"
+               data-full="FeatherFiles/jamaican_euphonia_3.jpg"
+               data-caption="Jamaican Euphonia – color study (view 3)" />
+        </div>
+        <div class="controls">
+          <label>
+            <span class="pill-dot"></span>
+            <input type="checkbox" class="seen" onchange="updateScore()" />
+            Seen
+          </label>
+          <label class="photo-label">
+            <span class="pill-dot"></span>
+            <input type="checkbox" class="photo" disabled />
+            Photo uploaded
+          </label>
+        </div>
+        <div class="file-input">
+          Upload your Euphonia photo for bonus points:
+          <input type="file" accept="image/*" onchange="handlePhotoUpload(this)" />
+          <div class="preview"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10. Northern Parula -->
+    <div class="bird-card" data-bird-id="northern_parula" data-base="4" data-bonus="2">
+      <div class="bird-card-inner">
+        <div class="bird-header">
+          <div>
+            <div class="bird-name"><span class="emoji">🌀</span> Northern Parula</div>
+            <div class="bird-alt">Migrant warbler</div>
+          </div>
+          <div class="points-tag">4 pts · +2 photo</div>
+        </div>
+        <div class="note">
+          Best time: early morning. Best spots: mixed shrubs &amp; small trees. Small, busy, and usually halfway to the next branch before your brain catches up.
+        </div>
+        <div class="thumb-row">
+          <img class="thumb"
+               src="FeatherFiles/northern_parula_1.jpg"
+               alt="Northern Parula – view 1"
+               data-full="FeatherFiles/northern_parula_1.jpg"
+               data-caption="Northern Parula – warbler blur (view 1)" />
+          <img class="thumb"
+               src="FeatherFiles/northern_parula_2.jpg"
+               alt="Northern Parula – view 2"
+               data-full="FeatherFiles/northern_parula_2.jpg"
+               data-caption="Northern Parula – quick pose (view 2)" />
+        </div>
+        <div class="controls">
+          <label>
+            <span class="pill-dot"></span>
+            <input type="checkbox" class="seen" onchange="updateScore()" />
+            Seen
+          </label>
+          <label class="photo-label">
+            <span class="pill-dot"></span>
+            <input type="checkbox" class="photo" disabled />
+            Photo uploaded
+          </label>
+        </div>
+        <div class="file-input">
+          Upload your Parula photo for bonus points:
+          <input type="file" accept="image/*" onchange="handlePhotoUpload(this)" />
+          <div class="preview"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11. American Redstart -->
+    <div class="bird-card" data-bird-id="american_redstart" data-base="4" data-bonus="2">
+      <div class="bird-card-inner">
+        <div class="bird-header">
+          <div>
+            <div class="bird-name"><span class="emoji">🔥</span> American Redstart</div>
+            <div class="bird-alt">Hyperactive migrant warbler</div>
+          </div>
+          <div class="points-tag">4 pts · +2 photo</div>
+        </div>
+        <div class="note">
+          Best time: early morning. Best spots: mixed shrubs &amp; small trees, constantly fanning its tail and making the leaves look alive.
+        </div>
+        <div class="thumb-row">
+          <img class="thumb"
+               src="FeatherFiles/american_redstart_1.jpg"
+               alt="American Redstart – view 1"
+               data-full="FeatherFiles/american_redstart_1.jpg"
+               data-caption="American Redstart – tail flash (view 1)" />
+          <img class="thumb"
+               src="FeatherFiles/american_redstart_2.jpg"
+               alt="American Redstart – view 2"
+               data-full="FeatherFiles/american_redstart_2.jpg"
+               data-caption="American Redstart – branch hop (view 2)" />
+        </div>
+        <div class="controls">
+          <label>
+            <span class="pill-dot"></span>
+            <input type="checkbox" class="seen" onchange="updateScore()" />
+            Seen
+          </label>
+          <label class="photo-label">
+            <span class="pill-dot"></span>
+            <input type="checkbox" class="photo" disabled />
+            Photo uploaded
+          </label>
+        </div>
+        <div class="file-input">
+          Upload your Redstart photo for bonus points:
+          <input type="file" accept="image/*" onchange="handlePhotoUpload(this)" />
+          <div class="preview"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12. Jamaican Owl -->
+    <div class="bird-card" data-bird-id="jamaican_owl" data-base="10" data-bonus="2">
+      <div class="bird-card-inner">
+        <div class="bird-header">
+          <div>
+            <div class="bird-name"><span class="emoji">🌙</span> Jamaican Owl</div>
+            <div class="bird-alt">Rare, nocturnal island owl</div>
+          </div>
+          <div class="points-tag">10 pts · +2 photo</div>
+        </div>
+        <div class="note">
+          Best time: early morning or an hour after sunset. Best spots: quiet paths, wooded fringe, near spa after ~7:30 PM. If you see this one, the quest gods are pleased.
+        </div>
+        <div class="thumb-row">
+          <img class="thumb"
+               src="FeatherFiles/jamaican_owl_1.jpg"
+               alt="Jamaican Owl – view 1"
+               data-full="FeatherFiles/jamaican_owl_1.jpg"
+               data-caption="Jamaican Owl – night guardian (view 1)" />
+          <img class="thumb"
+               src="FeatherFiles/jamaican_owl_2.jpg"
+               alt="Jamaican Owl – view 2"
+               data-full="FeatherFiles/jamaican_owl_2.jpg"
+               data-caption="Jamaican Owl – low perch (view 2)" />
+          <img class="thumb"
+               src="FeatherFiles/jamaican_owl_3.jpg"
+               alt="Jamaican Owl – view 3"
+               data-full="FeatherFiles/jamaican_owl_3.jpg"
+               data-caption="Jamaican Owl – stare from the dark (view 3)" />
+        </div>
+        <div class="controls">
+          <label>
+            <span class="pill-dot"></span>
+            <input type="checkbox" class="seen" onchange="updateScore()" />
+            Seen
+          </label>
+          <label class="photo-label">
+            <span class="pill-dot"></span>
+            <input type="checkbox" class="photo" disabled />
+            Photo uploaded
+          </label>
+        </div>
+        <div class="file-input">
+          Upload your Jamaican Owl photo for bonus points (legend status):
+          <input type="file" accept="image/*" onchange="handlePhotoUpload(this)" />
+          <div class="preview"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">
+      <span class="icon">🎁</span>
+      <span>Bonus: Birds Not on the List</span>
+    </div>
+    <div class="extra-birds">
+      <div class="extra-inner">
+        <p>
+          +5 pts for each <strong>new species</strong> not on the main list (must have a name &amp; photo or app ID).
+        </p>
+        <p>
+          How many extra species have you logged?
+          <input id="extraCount" type="number" min="0" value="0" oninput="updateScore()" /> × 5 pts
+        </p>
+        <textarea placeholder="Names / notes for extra birds (e.g., 'Antillean Palm Swift over pool, 3/27 at sunset')"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lightbox overlay -->
+  <div id="lightboxOverlay">
+    <div>
+      <img id="lightboxImage" src="" alt="Bird photo" />
+      <div id="lightboxOverlayCaption"></div>
+    </div>
+  </div>
+
+  <!-- Achievement toast -->
+  <div id="rewardToast"></div>
+  <!-- Snarky gaming-card toast -->
+  <div id="snarkToast">
+    <div class="snark-title"></div>
+    <div class="snark-body"></div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "gp_bird_quest_v3";
+
+    let rewards = {
+      firstBirdSeen: false,
+      firstPhoto: false,
+      score15: false,
+      score30: false,
+      extraSpecies: false,
+      owlSeen: false,
+      skyWitch: false,
+      captainObvious: false,
+      nectarQueen: false,
+      beachBum: false,
+      noBoomer: false
+    };
+
+    let suppressRewards = false;
+
+    function saveState() {
+      const state = { birds: {}, extraCount: 0, rewards };
+      const cards = document.querySelectorAll(".bird-card");
+      cards.forEach(card => {
+        const id = card.dataset.birdId;
+        if (!id) return;
+        const seen = card.querySelector(".seen")?.checked || false;
+        const hasPhoto = card.dataset.hasPhoto === "1";
+
+        let photoData = "";
+        const previewImg = card.querySelector(".preview img");
+        if (previewImg && previewImg.src && previewImg.src.startsWith("data:")) {
+          photoData = previewImg.src;
+        }
+
+        state.birds[id] = { seen, hasPhoto, photoData };
+      });
+
+      const extra = document.getElementById("extraCount");
+      if (extra) {
+        state.extraCount = Number(extra.value) || 0;
+      }
+
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {
+        console.warn("Could not save bird quest state:", e);
+      }
+    }
+
+    function loadState() {
+      let raw;
+      try {
+        raw = localStorage.getItem(STORAGE_KEY);
+      } catch (e) {
+        console.warn("Could not read bird quest state:", e);
+        return;
+      }
+      if (!raw) return;
+
+      let state;
+      try {
+        state = JSON.parse(raw);
+      } catch (e) {
+        console.warn("Bad state JSON, clearing:", e);
+        localStorage.removeItem(STORAGE_KEY);
+        return;
+      }
+
+      const birdsState = state.birds || {};
+      const cards = document.querySelectorAll(".bird-card");
+      cards.forEach(card => {
+        const id = card.dataset.birdId;
+        if (!id || !birdsState[id]) return;
+        const b = birdsState[id];
+
+        const seenCb = card.querySelector(".seen");
+        if (seenCb) seenCb.checked = !!b.seen;
+
+        if (b.hasPhoto) {
+          card.dataset.hasPhoto = "1";
+          const photoCheckbox = card.querySelector(".photo");
+          if (photoCheckbox) photoCheckbox.checked = true;
+        }
+
+        if (b.photoData) {
+          const previewDiv = card.querySelector(".preview");
+          if (previewDiv) {
+            previewDiv.innerHTML = '<img src="' + b.photoData + '" alt="Uploaded bird photo" />';
+          }
+        }
+      });
+
+      const extra = document.getElementById("extraCount");
+      if (extra && typeof state.extraCount !== "undefined") {
+        extra.value = state.extraCount;
+      }
+
+      if (state.rewards && typeof state.rewards === "object") {
+        rewards = Object.assign({}, rewards, state.rewards);
+      }
+
+      suppressRewards = true;
+      updateScore(false);
+      suppressRewards = false;
+    }
+
+    function showReward(message) {
+      if (suppressRewards) return;
+      const toast = document.getElementById("rewardToast");
+      if (!toast) return;
+
+      toast.textContent = message;
+      toast.style.display = "block";
+
+      requestAnimationFrame(() => {
+        toast.classList.add("visible");
+      });
+
+      clearTimeout(toast._hideTimer);
+      toast._hideTimer = setTimeout(() => {
+        toast.classList.remove("visible");
+        setTimeout(() => {
+          toast.style.display = "none";
+        }, 300);
+      }, 8500);
+    }
+
+    function showSnarkReward(title, body) {
+      if (suppressRewards) return;
+      const toast = document.getElementById("snarkToast");
+      if (!toast) return;
+      const titleEl = toast.querySelector(".snark-title");
+      const bodyEl = toast.querySelector(".snark-body");
+      if (titleEl) titleEl.textContent = title || "";
+      if (bodyEl) bodyEl.textContent = body || "";
+
+      toast.style.display = "block";
+      requestAnimationFrame(() => {
+        toast.classList.add("visible");
+      });
+
+      clearTimeout(toast._hideTimer);
+      toast._hideTimer = setTimeout(() => {
+        toast.classList.remove("visible");
+        setTimeout(() => {
+          toast.style.display = "none";
+        }, 300);
+      }, 9500);
+    }
+
+    function checkRewards(total) {
+      if (suppressRewards) return;
+
+      const cards = document.querySelectorAll(".bird-card");
+
+      // First bird marked Seen
+      if (!rewards.firstBirdSeen) {
+        let anySeen = false;
+        cards.forEach(card => {
+          const seen = card.querySelector(".seen");
+          if (seen && seen.checked) anySeen = true;
+        });
+        if (anySeen) {
+          rewards.firstBirdSeen = true;
+          showReward("📝 Checklist Activated – You’ve officially joined the Grand Palladium bird census.");
+        }
+      }
+
+      // First photo upload on any bird
+      if (!rewards.firstPhoto) {
+        let anyPhoto = false;
+        cards.forEach(card => {
+          if (card.dataset.hasPhoto === "1") anyPhoto = true;
+        });
+        if (anyPhoto) {
+          rewards.firstPhoto = true;
+          showReward("📸 Pics or it didn’t happen: accepted.");
+        }
+      }
+
+      // Score ≥ 15
+      if (!rewards.score15 && total >= 15) {
+        rewards.score15 = true;
+        showReward("🌺 Garden Guardian – Hummingbirds and bananaquits recognize your authority.");
+      }
+
+      // Score ≥ 30
+      if (!rewards.score30 && total >= 30) {
+        rewards.score30 = true;
+        showReward("🪂 Thermal Rider – You’re now spiritually part frigatebird.");
+      }
+
+      // Extra species count ≥ 1
+      if (!rewards.extraSpecies) {
+        const extraCount = Number(document.getElementById("extraCount").value) || 0;
+        if (extraCount >= 1) {
+          rewards.extraSpecies = true;
+          showReward("🎁 Off-Menu Birder – You found a bird we didn’t even list. Show-off.");
+        }
+      }
+
+      // Jamaican Owl seen
+      if (!rewards.owlSeen) {
+        const owlCard = document.querySelector('.bird-card[data-bird-id="jamaican_owl"]');
+        if (owlCard) {
+          const seen = owlCard.querySelector(".seen");
+          if (seen && seen.checked) {
+            rewards.owlSeen = true;
+            showReward("🌙 Night Wizard – This sighting should come with its own T-shirt.");
+          }
+        }
+      }
+
+      // All birds seen -> Grand Palladium Sky Witch
+      if (!rewards.skyWitch) {
+        let allSeen = true;
+        cards.forEach(card => {
+          const seen = card.querySelector(".seen");
+          if (!seen || !seen.checked) {
+            allSeen = false;
+          }
+        });
+        if (allSeen) {
+          rewards.skyWitch = true;
+          showReward("🧹 Rank Unlocked: Grand Palladium Sky Witch – Really? Did you just look for birds the whole time?");
+        }
+      }
+
+      // Captain Obvious – any 1 or 2 point bird seen
+      if (!rewards.captainObvious) {
+        let lowSeen = false;
+        cards.forEach(card => {
+          const base = Number(card.getAttribute("data-base")) || 0;
+          if (base === 1 || base === 2) {
+            const seen = card.querySelector(".seen");
+            if (seen && seen.checked) {
+              lowSeen = true;
+            }
+          }
+        });
+        if (lowSeen) {
+          rewards.captainObvious = true;
+          showSnarkReward(
+            "🙃 Captain Obvious Achievement",
+            "Wow. You spotted one of the resort’s most common birds. Bold strategy, birder. Proud of you anyway."
+          );
+        }
+      }
+
+      // Nectar Queen – Doctor Bird seen
+      if (!rewards.nectarQueen) {
+        const docCard = document.querySelector('.bird-card[data-bird-id="doctor_bird"]');
+        if (docCard) {
+          const seen = docCard.querySelector(".seen");
+          if (seen && seen.checked) {
+            rewards.nectarQueen = true;
+            showSnarkReward(
+              "🍹 Nectar Queen Achievement",
+              "Sure, you’re here for the hummingbird nectar… but we both know the swim-up bar is your real feeder. Go treat yourself to a cocktail."
+            );
+          }
+        }
+      }
+
+      // Beach-Bum Stoner – Frigatebird + Pelican + Egret/Herons
+      if (!rewards.beachBum) {
+        const frig = document.querySelector('.bird-card[data-bird-id="magnificent_frigatebird"]');
+        const pel  = document.querySelector('.bird-card[data-bird-id="brown_pelican"]');
+        const egr  = document.querySelector('.bird-card[data-bird-id="egrets_herons"]');
+        if (frig && pel && egr) {
+          const sFrig = frig.querySelector(".seen");
+          const sPel  = pel.querySelector(".seen");
+          const sEgr  = egr.querySelector(".seen");
+          if (sFrig && sFrig.checked && sPel && sPel.checked && sEgr && sEgr.checked) {
+            rewards.beachBum = true;
+            showSnarkReward(
+              "🌴 Beach-Bum Stoner Achievement",
+              "Frigatebird, Pelican, and Egrets? Someone’s been parked at Sunset Cove all week. Been wading out to Michael’s boat for some local hippy-lettuce, or just vibing that hard?"
+            );
+          }
+        }
+      }
+
+      // "Don't Call Me a Boomer" – seen + photo on any bird
+      if (!rewards.noBoomer) {
+        let isModernBirder = false;
+        cards.forEach(card => {
+          const seen = card.querySelector(".seen");
+          const hasPhoto = card.dataset.hasPhoto === "1";
+          if (seen && seen.checked && hasPhoto) {
+            isModernBirder = true;
+          }
+        });
+        if (isModernBirder) {
+          rewards.noBoomer = true;
+          showSnarkReward(
+            "📼 \"Don't Call Me a Boomer\" Achievement",
+            "Hey, you birdwatch AND you can upload a photo. Look at you, fully digital. I bet your old VCR clock doesn’t even flash 00:00 anymore."
+          );
+        }
+      }
+    }
+
+    function updateScore(save = true) {
+      let total = 0;
+      const cards = document.querySelectorAll(".bird-card");
+      cards.forEach(card => {
+        const base = Number(card.getAttribute("data-base")) || 0;
+        const bonus = Number(card.getAttribute("data-bonus")) || 0;
+        const seen = card.querySelector(".seen");
+        const hasPhoto = card.dataset.hasPhoto === "1";
+
+        if (seen && seen.checked) {
+          total += base;
+          if (hasPhoto) {
+            total += bonus;
+          }
+        }
+      });
+      const extraCount = Number(document.getElementById("extraCount").value) || 0;
+      total += extraCount * 5;
+      document.getElementById("totalScore").textContent = total;
+
+      checkRewards(total);
+
+      if (save) {
+        saveState();
+      }
+    }
+
+    function resetForm() {
+      const inputs = document.querySelectorAll("input[type='checkbox'], input[type='number']");
+      inputs.forEach(input => {
+        if (input.type === "checkbox") input.checked = false;
+        if (input.type === "number") input.value = 0;
+      });
+
+      const cards = document.querySelectorAll(".bird-card");
+      cards.forEach(card => {
+        delete card.dataset.hasPhoto;
+
+        const photoCheckbox = card.querySelector(".photo");
+        if (photoCheckbox) {
+          photoCheckbox.checked = false;
+        }
+
+        const previewDiv = card.querySelector(".preview");
+        if (previewDiv) {
+          previewDiv.innerHTML = "";
+        }
+      });
+
+      rewards = {
+        firstBirdSeen: false,
+        firstPhoto: false,
+        score15: false,
+        score30: false,
+        extraSpecies: false,
+        owlSeen: false,
+        skyWitch: false,
+        captainObvious: false,
+        nectarQueen: false,
+        beachBum: false,
+        noBoomer: false
+      };
+
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+      } catch (e) {
+        console.warn("Could not clear bird quest state:", e);
+      }
+
+      updateScore(false);
+    }
+
+    function handlePhotoUpload(input) {
+      if (!input.files || !input.files[0]) return;
+
+      const card = input.closest(".bird-card");
+      if (!card) return;
+
+      card.dataset.hasPhoto = "1";
+
+      const photoCheckbox = card.querySelector(".photo");
+      if (photoCheckbox) {
+        photoCheckbox.checked = true;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const previewDiv = input.parentElement.querySelector(".preview");
+        if (previewDiv) {
+          previewDiv.innerHTML = '<img src="' + e.target.result + '" alt="Uploaded bird photo" />';
+        }
+        updateScore();
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const overlay = document.getElementById("lightboxOverlay");
+      const lbImg = document.getElementById("lightboxImage");
+      const lbCaption = document.getElementById("lightboxOverlayCaption");
+
+      document.querySelectorAll("img.thumb").forEach(img => {
+        img.addEventListener("click", () => {
+          const fullSrc = img.getAttribute("data-full") || img.src;
+          const caption = img.getAttribute("data-caption") || img.alt || "";
+          lbImg.src = fullSrc;
+          lbCaption.textContent = caption;
+          overlay.style.display = "flex";
+        });
+      });
+
+      overlay.addEventListener("click", () => {
+        overlay.style.display = "none";
+        lbImg.src = "";
+        lbCaption.textContent = "";
+      });
+
+      loadState();
+    });
+  </script>
+</body>
+</html>
